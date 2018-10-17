@@ -12,15 +12,15 @@ from sentry_sdk.integrations.django import DjangoIntegration
 import git
 
 
-logger = logging.getLogger("django.sentry_app")
+logger = logging.getLogger("django.sentry_django_settings")
 
 
 class Sentry(AppConfig):
-    name = ''
+    name = 'sentry_django_settings'
 
     def ready(self):
         if not getattr(settings, "SENTRY"):
-            logger.warn("No SENTRY settings found.")
+            logger.warning("No SENTRY settings found.")
             return
         if not settings.SENTRY["enabled"]:
             logger.info("Sentry disabled.")
