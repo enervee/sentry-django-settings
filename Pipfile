@@ -4,8 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+django = "*"
+sentry-sdk = "*"
+gitpython = "*"
 
 [dev-packages]
+twine = "*"
 
 [requires]
-python_version = "2.7"
+python_version = "3.6"

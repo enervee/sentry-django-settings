@@ -12,16 +12,21 @@ setup(
     version='0.1',
     packages=find_packages(),
     include_package_data=True,
-    license='All rights reserved',  # example license
+    license='BSD License',
     description='Easy Django-Sentry integration.',
     long_description=README,
     url='https://enervee.com/',
     author='Salvatore Lopiparo',
     author_email='salvatore@enervee.com',
+    install_requires=[
+        'sentry_sdk',
+        'gitpython',
+    ],
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.9',  # replace "X.Y" as appropriate
+        'Framework :: Django :: 1.9',
+        'Framework :: Django :: 2.1',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
