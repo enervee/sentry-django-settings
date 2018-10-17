@@ -9,8 +9,6 @@ from django.conf import settings
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-import git
-
 
 logger = logging.getLogger("django.sentry_django_settings")
 
@@ -26,19 +24,20 @@ class Sentry(AppConfig):
             logger.info("Sentry disabled.")
             return
 
-        self.init_sentry(settings.SENTRY['dsn'], settings.SENTRY['environment'])
+        self.init_sentry(
+            settings.SENTRY['dsn'],
+            environment=settings.SENTRY.get('environment'),
+            release=settings.SENTRY.get('release'),
+        )
         logger.info("Sentry enabled.")
 
-    def init_sentry(self, dsn, environment):
+    def init_sentry(self, dsn, environment=None, release=None):
         """
         Sets up Sentry to send errors to the Sentry server.
         """
-        repo = git.Repo(search_parent_directories=True)
-        sha = repo.head.object.hexsha
-
         sentry_sdk.init(
             dsn=dsn,
             integrations=[DjangoIntegration()],
             environment=environment,
-            release=sha,
+            release=release,
         )

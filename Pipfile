@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 django = "*"
 sentry-sdk = "*"
-gitpython = "*"
 
 [dev-packages]
 
