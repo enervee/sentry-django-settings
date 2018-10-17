@@ -8,7 +8,15 @@ This relies on your project being a Git repository for Sentry's release tag.
 
 `pip install sentry_django_settings`
 
-Add `sentry_django_settings` to your `INSTALLED_APPS`.
+Add `sentry_django_settings.apps.Sentry` to your `INSTALLED_APPS`.
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'sentry_django_settings.apps.Sentry',
+    # ...
+]
+```
 
 Add a setting like the following to your `settings.py` file:
 
