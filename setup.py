@@ -16,8 +16,6 @@ setup(
     description='Easy Django-Sentry integration via Django settings.',
     long_description=README,
     url='https://gitlab.com/enervee/sentry_django_settings',
-    author='Salvatore Lopiparo',
-    author_email='salvatore@enervee.com',
     install_requires=[
         'sentry_sdk',
         'gitpython',
