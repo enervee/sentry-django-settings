@@ -16,43 +16,64 @@ logger = logging.getLogger("django.sentry_django_settings")
 
 
 class Sentry(AppConfig):
-    name = 'sentry_django_settings'
+    name = "sentry_django_settings"
+
+    extra_config_options = {"enabled", "git_sha_path"}
 
     def ready(self):
-        if not getattr(settings, "SENTRY"):
+        sentry_setting = getattr(settings, "SENTRY", None)
+        if not sentry_setting:
             logger.warning("No SENTRY settings found.")
             return
-        if not settings.SENTRY["enabled"]:
+
+        sentry_django_config = SentryDjangoConfig(sentry_setting)
+
+        if not sentry_django_config.enabled():
             logger.info("Sentry disabled.")
             return
 
-        release = self.get_release()
+        converted_config = sentry_django_config.sentry_config()
+        sentry_sdk.init(**converted_config)
 
-        self.init_sentry(
-            settings.SENTRY['dsn'],
-            environment=settings.SENTRY.get('environment'),
-            release=release,
-        )
-        logger.info("Sentry enabled.")
 
-    def init_sentry(self, dsn, environment=None, release=None):
+class SentryDjangoConfig:
+    EXTRA_CONFIG_OPTIONS = {"enabled", "git_sha_path"}
+
+    def __init__(self, config):
+        self.config = config
+
+    def sentry_config(self):
+        """Creates the Sentry config based on default values and the configuration
+        in the settings.
+
+        Returns:
+            dict: a collection of Sentry configuration options
         """
-        Sets up Sentry to send errors to the Sentry server.
-        """
-        sentry_sdk.init(
-            dsn=dsn,
-            integrations=[DjangoIntegration()],
-            environment=environment,
-            release=release,
-        )
+        config = self.default_config()
+        config.update(self.config)
+        config["release"] = self.get_release()
+        self.remove_extra_options(config)
+        return config
 
     def get_release(self):
         """Gets the "release" value. If one isn't given, it tries to get it
         from the project."""
-        release = settings.SENTRY.get('release')
+        release = self.config.get("release")
         if not release:
             release = get_from_repo()
-        if not release and settings.SENTRY.get('git_sha_path'):
-            release = get_from_file(settings.SENTRY.get('git_sha_path'))
+        if not release and self.config.get("git_sha_path"):
+            release = get_from_file(self.config.get("git_sha_path"))
 
         return release
+
+    def enabled(self):
+        return self.config.get("enabled", False)
+
+    @staticmethod
+    def default_config():
+        return {"integrations": [DjangoIntegration()]}
+
+    @classmethod
+    def remove_extra_options(cls, config):
+        for extra_key in cls.EXTRA_CONFIG_OPTIONS:
+            config.pop(extra_key, None)
