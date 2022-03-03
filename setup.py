@@ -15,7 +15,8 @@ setup(
     license='BSD License',
     description='Easy Django-Sentry integration via Django settings.',
     long_description=README,
-    url='https://gitlab.com/enervee/sentry_django_settings',
+    long_description_content_type="text/markdown",
+    url='https://github.com/enervee/sentry-django-settings',
     install_requires=[
         'sentry_sdk',
         'gitpython',
