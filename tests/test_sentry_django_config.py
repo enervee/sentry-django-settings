@@ -9,13 +9,10 @@ class TestSentryDjangoConfig:
         """
         The enabled method will return True if the configuration is considered enabled.
         """
-        config = SentryDjangoConfig({"enabled": True})
-        assert config.enabled()
+        assert SentryDjangoConfig({"enabled": True}).enabled()
 
-        config = SentryDjangoConfig({"enabled": False})
-        assert not config.enabled()
-        config = SentryDjangoConfig({})
-        assert not config.enabled()
+        assert not SentryDjangoConfig({"enabled": False}).enabled()
+        assert not SentryDjangoConfig({}).enabled()
 
     def test_sentry_config_returns_a_dict_suitable_for_sentry(self):
         """
@@ -46,9 +43,7 @@ class TestSentryDjangoConfig:
         If the integration option is not specified, it will default to a list containing
         only the DjangoIntegration class.
         """
-        config = SentryDjangoConfig({})
-
-        sentry_config = config.sentry_config()
+        sentry_config = SentryDjangoConfig({}).sentry_config()
 
         assert len(sentry_config["integrations"]) == 1
         assert isinstance(sentry_config["integrations"][0], DjangoIntegration)
@@ -59,9 +54,8 @@ class TestSentryDjangoConfig:
         the SHA commit hash for HEAD.
         """
         mock_get_from_repo.return_value = "HEAD SHA Value"
-        config = SentryDjangoConfig({})
 
-        sentry_config = config.sentry_config()
+        sentry_config = SentryDjangoConfig({}).sentry_config()
 
         assert sentry_config["release"] == "HEAD SHA Value"
 
@@ -76,47 +70,44 @@ class TestSentryDjangoConfig:
         """
         mock_get_from_repo.return_value = None  # get_from_repo couldn't find a commit
         mock_get_from_file.return_value = "SHA stored in file"
-        config = SentryDjangoConfig({"git_sha_path": "project_sha_file.txt"})
 
-        sentry_config = config.sentry_config()
+        sentry_config = SentryDjangoConfig(
+            {"git_sha_path": "project_sha_file.txt"}
+        ).sentry_config()
 
         assert sentry_config["release"] == "SHA stored in file"
         assert mock_get_from_file.mock_calls == [mock.call("project_sha_file.txt")]
 
     def test_sentry_config_removes_options_specific_to_library(self):
         """
-        The configuration from sentry_config removes any extraneous options that are
-        only relevant to the library.
+        The result from sentry_config removes any options from the passed in
+        configuration that are only relevant to this library.
         """
-        config = SentryDjangoConfig(
+        sentry_config = SentryDjangoConfig(
             {
                 "enabled": False,
                 "git_sha_path": "project_sha_file.txt",
                 "release": "current_release",
             }
-        )
+        ).sentry_config()
 
-        sentry_config = config.sentry_config()
-
-        assert sentry_config.get("enabled") is None
-        assert sentry_config.get("git_sha_path") is None
-        assert sentry_config.get("release") == "current_release"
+        assert "enabled" not in sentry_config
+        assert "git_sha_path" not in sentry_config
+        assert "release" in sentry_config
 
     def test_sentry_config_receives_any_unrecognized_options(self):
         """
-        Any options that aren't recognized by the class will be remain untouched by
+        Any options that aren't recognized by the class will remain untouched by
         the sentry_config method.
         """
-        config = SentryDjangoConfig(
+        sentry_config = SentryDjangoConfig(
             {
                 "enabled": True,
                 "traces_sample_rate": 0.5,
                 "extra_option_1": False,
                 "extra_option_2": {"value1": "string", "value2": True},
             }
-        )
-
-        sentry_config = config.sentry_config()
+        ).sentry_config()
 
         assert "extra_option_1" in sentry_config
         assert sentry_config["extra_option_2"] == {"value1": "string", "value2": True}
