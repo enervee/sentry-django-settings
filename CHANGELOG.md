@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0]
+
 ### Added
 
 - Library now supports configuration that is passed directly onto Sentry's `init` method (https://docs.sentry.io/platforms/python/configuration/options/)
 
-[unreleased]: https://github.com/enervee/sentry-django-settings/compare/v0.4.0...HEAD
+[unreleased]: https://github.com/enervee/sentry-django-settings/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/enervee/sentry-django-settings/compare/v0.4.0...0.5.0

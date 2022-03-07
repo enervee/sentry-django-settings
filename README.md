@@ -42,3 +42,5 @@ The `environment` should be appropriate to environment where the server will be 
 The `release` can be any string. If left blank or excluded and this is being run inside of a Git repo, the Git SHA will be used instead. Note: If `release` is defined, then `git_sha_path` is ignored.
 
 The `git_sha_path` is a path to a file that contains the Git SHA string. This is useful when deploying via a packaging service. During packaging, create a file that has the Git SHA, then reference it in this setting. Note: If `release` is defined, then `git_sha_path` is ignored.
+
+All other keys passed into the settings are forwarded onto the Sentry SDK `init` method. See [their documentation](https://docs.sentry.io/platforms/python/configuration/options/) for more information.
