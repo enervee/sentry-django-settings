@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sentry-django-settings"
+name = "sentry_django_settings"
 version = "0.4.0"
 description = "Easy Django-Sentry integration via Django settings."
 authors = []
@@ -12,7 +12,12 @@ django = "*"
 gitpython = "*"
 
 [tool.poetry.dev-dependencies]
+pytest = "^7.0.1"
+pytest-django = "^4.5.2"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
