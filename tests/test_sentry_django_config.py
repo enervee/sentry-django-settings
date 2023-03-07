@@ -1,3 +1,4 @@
+import logging
 from unittest import mock
 
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -48,35 +49,25 @@ class TestSentryDjangoConfig:
         assert len(sentry_config["integrations"]) == 1
         assert isinstance(sentry_config["integrations"][0], DjangoIntegration)
 
-    def test_sentry_config_adds_default_release_from_git_repo(self, mock_get_from_repo):
+    def test_sentry_config_warns_about_use_of_git_sha_path(self, caplog):
         """
-        If the release option is not specified, it will attempt to pull the release from
-        the SHA commit hash for HEAD.
+        If the git_sha_path option is specified, the library will warn that the
+        option is no longer supported and doesn't affect functionality.
         """
-        mock_get_from_repo.return_value = "HEAD SHA Value"
-
-        sentry_config = SentryDjangoConfig({}).sentry_config()
-
-        assert sentry_config["release"] == "HEAD SHA Value"
-
-    def test_sentry_config_release_default_falls_back_to_specified_sha_file(
-        self,
-        mock_get_from_repo,
-        mock_get_from_file,
-    ):
-        """
-        If the git_sha_path option is specified and a release wasn't provided or discovered
-        from the git repo, then the release is set to the contents of that file.
-        """
-        mock_get_from_repo.return_value = None  # get_from_repo couldn't find a commit
-        mock_get_from_file.return_value = "SHA stored in file"
-
         sentry_config = SentryDjangoConfig(
             {"git_sha_path": "project_sha_file.txt"}
         ).sentry_config()
 
-        assert sentry_config["release"] == "SHA stored in file"
-        assert mock_get_from_file.mock_calls == [mock.call("project_sha_file.txt")]
+        assert sentry_config.get("release") == None
+        assert caplog.record_tuples == [
+            (
+                "django.sentry_django_settings",
+                logging.WARNING,
+                "`git_sha_path` is no longer supported and has no effect. See "
+                + "https://docs.sentry.io/platforms/python/configuration/options/#release"
+                + " on how to set the release directly.",
+            )
+        ]
 
     def test_sentry_config_removes_options_specific_to_library(self):
         """

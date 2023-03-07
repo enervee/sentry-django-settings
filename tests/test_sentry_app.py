@@ -1,10 +1,22 @@
 import logging
 from unittest import mock
+import warnings
 
 from django.apps import AppConfig
 
 
 class TestSentryApp:
+    def test_ready_raises_future_warning(self):
+        app = AppConfig.create("sentry_django_settings.apps.Sentry")
+        with warnings.catch_warnings(record=True) as w:
+            app.ready()
+            assert len(w) == 1
+            assert issubclass(w[0].category, FutureWarning)
+            assert str(w[0].message) == (
+                "sentry_django_settings is no longer supported. See "
+                "https://github.com/enervee/sentry-django-settings/issues/12 for more information."
+            )
+
     def test_ready_initializes_sentry(self, settings):
         """
         If the SENTRY setting is available and "enabled" is set to True, the App

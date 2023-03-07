@@ -1,3 +1,12 @@
+# DEPRECATED
+
+This package is no longer being supported. While it should still work for the foreseeable feature,
+we recommend using the official [sentry-sdk](https://github.com/getsentry/sentry-python)
+package and following their documentation on
+[integrating with Django](https://docs.sentry.io/platforms/python/guides/django/).
+
+Read [the announcement issue](https://github.com/enervee/sentry-django-settings/issues/12) for more information.
+
 # Sentry Django Settings
 
 This is a package for Django that allows you to add Sentry integration by adding a Django setting.
@@ -16,7 +25,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-Add a setting like the following to your `settings.py` file:
+You can now add the `SENTRY` setting to your `settings.py` file:
 
 ```python
 SENTRY = {
@@ -24,7 +33,6 @@ SENTRY = {
     'dsn': "https://2e2ac79f64d34e4b85c3a3173e343464@sentry.mysite.com/5",
     'environment': "dev",  # Optional
     'release': '1.0',  # Optional
-    'git_sha_path': './git_sha'  # Optional
 }
 ```
 
@@ -39,8 +47,5 @@ To find the DSN in Sentry:
 
 The `environment` should be appropriate to environment where the server will be running.
 
-The `release` can be any string. If left blank or excluded and this is being run inside of a Git repo, the Git SHA will be used instead. Note: If `release` is defined, then `git_sha_path` is ignored.
-
-The `git_sha_path` is a path to a file that contains the Git SHA string. This is useful when deploying via a packaging service. During packaging, create a file that has the Git SHA, then reference it in this setting. Note: If `release` is defined, then `git_sha_path` is ignored.
-
-All other keys passed into the settings are forwarded onto the Sentry SDK `init` method. See [their documentation](https://docs.sentry.io/platforms/python/configuration/options/) for more information.
+All other keys passed into the settings are forwarded onto the Sentry SDK `init` method.
+See [their documentation](https://docs.sentry.io/platforms/python/configuration/options/) for more information.
