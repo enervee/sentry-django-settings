@@ -1,5 +1,6 @@
 import logging
 from unittest import mock
+import warnings
 
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_django_settings.apps import SentryDjangoConfig
@@ -49,25 +50,24 @@ class TestSentryDjangoConfig:
         assert len(sentry_config["integrations"]) == 1
         assert isinstance(sentry_config["integrations"][0], DjangoIntegration)
 
-    def test_sentry_config_warns_about_use_of_git_sha_path(self, caplog):
+    def test_sentry_config_warns_about_use_of_git_sha_path(self):
         """
         If the git_sha_path option is specified, the library will warn that the
         option is no longer supported and doesn't affect functionality.
         """
-        sentry_config = SentryDjangoConfig(
-            {"git_sha_path": "project_sha_file.txt"}
-        ).sentry_config()
+        with warnings.catch_warnings(record=True) as w:
+            sentry_config = SentryDjangoConfig(
+                {"git_sha_path": "project_sha_file.txt"}
+            ).sentry_config()
 
-        assert sentry_config.get("release") == None
-        assert caplog.record_tuples == [
-            (
-                "django.sentry_django_settings",
-                logging.WARNING,
+            assert sentry_config.get("release") == None
+            assert len(w) == 1
+            assert issubclass(w[0].category, FutureWarning)
+            assert str(w[0].message) == (
                 "`git_sha_path` is no longer supported and has no effect. See "
-                + "https://docs.sentry.io/platforms/python/configuration/options/#release"
-                + " on how to set the release directly.",
+                "https://docs.sentry.io/platforms/python/configuration/options/#release"
+                " on how to set the release directly."
             )
-        ]
 
     def test_sentry_config_removes_options_specific_to_library(self):
         """

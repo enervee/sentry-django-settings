@@ -69,9 +69,11 @@ class SentryDjangoConfig:
     def remove_extra_options(cls, config):
         for extra_key in cls.EXTRA_CONFIG_OPTIONS:
             if extra_key == "git_sha_path" and extra_key in config:
-                logger.warning(
+                warnings.warn(
                     "`git_sha_path` is no longer supported and has no effect. "
-                    + "See https://docs.sentry.io/platforms/python/configuration/options/#release"
-                    + " on how to set the release directly."
+                    "See https://docs.sentry.io/platforms/python/configuration/options/#release"
+                    " on how to set the release directly.",
+                    FutureWarning,
+                    stacklevel=4,
                 )
             config.pop(extra_key, None)
