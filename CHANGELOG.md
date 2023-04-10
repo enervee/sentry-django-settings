@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet
+## [0.6.0]
+
+### Deprecated
+
+- sentry-django-settings is deprecated and no longer supported, and the Django app will emit a FutureWarning if included in the `INSTALLED_APPS` setting.
+  - [See here for more information](https://github.com/enervee/sentry-django-settings/issues/12)
+
+### Removed
+
+- Support for `git_sha_path` has been removed in favor of Sentry's default behavior for `release`.
+  - If you previously used `release` directly, or supplied _neither_ `release` or `git_sha_path`,
+    behavior will be unchanged
+  - If you used `git_sha_path` and not `release`, then the library will warn you that `git_sha_path`
+    no longer has any affect. Sentry will fall back to it's default behavior of naming the release
+    (currently uses the current git commit's SHA hash).
 
 ## [0.5.0]
 
@@ -15,5 +29,6 @@ Nothing yet
 
 - Library now supports configuration that is passed directly onto Sentry's `init` method (https://docs.sentry.io/platforms/python/configuration/options/)
 
-[unreleased]: https://github.com/enervee/sentry-django-settings/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/enervee/sentry-django-settings/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/enervee/sentry-django-settings/compare/v0.5.0...0.6.0
 [0.5.0]: https://github.com/enervee/sentry-django-settings/compare/v0.4.0...0.5.0
