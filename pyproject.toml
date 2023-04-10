@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sentry_django_settings"
-version = "0.6.0"
+version = "0.6.1"
 description = "Easy Django-Sentry integration via Django settings."
 authors = []
 license = "BSD License"
